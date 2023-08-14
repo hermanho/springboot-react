@@ -1,0 +1,72 @@
+# Define the query type
+type Query {
+  customers(sort: String, where: JSON, start: Int, limit: Int): [Customer]
+  customerById(id: ID!): Customer
+}
+
+type Customer {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  emailAddress: String
+  phoneNumber: String
+  address: String
+}
+
+input Filter {
+  firstName: StringExpression
+  lastName: StringExpression
+  emailAddress: StringExpression
+  phoneNumber: StringExpression
+  address: StringExpression
+
+  and: [Filter!]
+  or: [Filter!]
+  not: Filter
+}
+
+input StringExpression {
+  equals: String
+  contains: String
+}
+
+input IntExpression {
+  eq: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+}
+
+type Mutation {
+  createCustomer(input: CustomerInput!): Customer!
+  updateCustomer(input: CustomerUpdateInput!): Customer!
+}
+
+input CustomerInput {
+  firstName: String
+  lastName: String
+  emailAddress: String
+  phoneNumber: String
+  address: String
+}
+
+input CustomerUpdateInput {
+  where: CustomerUpdateWhere!
+  data: CustomerInput!
+}
+
+input CustomerUpdateWhere {
+  id: ID!
+}
+
+
+scalar JSON
+  @specifiedBy(
+    url: "https://github.com/graphql-java/graphql-java-extended-scalars"
+  )
+
+scalar Object
+  @specifiedBy(
+    url: "https://github.com/graphql-java/graphql-java-extended-scalars"
+  )

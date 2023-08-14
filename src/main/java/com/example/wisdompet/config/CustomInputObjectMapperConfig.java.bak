@@ -1,0 +1,42 @@
+package com.example.wisdompet.config;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.kotlin.ExtensionsKt;
+
+import com.netflix.graphql.dgs.internal.InputObjectMapper;
+
+import kotlin.jvm.JvmClassMappingKt;
+import kotlin.reflect.KClass;
+
+@Configuration
+public class CustomInputObjectMapperConfig {
+
+  @Bean
+  public InputObjectMapper inputObjectMapper() {
+    return new InputObjectMapper() {
+
+      @Override
+      public <T> T mapToKotlinObject(
+          Map<String, ?> inputMap,
+          KClass<T> targetClass) {
+        Map<String, ?> filteredInputMap = inputMap.entrySet().stream().filter(m -> !m.getKey().startsWith("ignore"))
+            .collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+        return ExtensionsKt.jacksonObjectMapper().convertValue(filteredInputMap,
+            JvmClassMappingKt.getJavaClass(targetClass));
+      }
+
+      @Override
+      public <T> T mapToJavaObject(Map<String, ?> inputMap, Class<T> targetClass) {
+        Map<String, ?> filteredInputMap = inputMap.entrySet().stream().filter(m -> !m.getKey().startsWith("ignore"))
+            .collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+        return new ObjectMapper().convertValue(filteredInputMap, targetClass);
+      }
+    };
+  }
+}

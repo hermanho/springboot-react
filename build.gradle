@@ -1,0 +1,88 @@
+plugins {
+	id "java"
+	id "org.springframework.boot" version "3.1.2"
+	id "io.spring.dependency-management" version "1.1.2"
+	// id "com.netflix.dgs.codegen" version "5.12.4"
+}
+
+group = "com.example.wisdompet"
+version = "0.0.1-SNAPSHOT"
+def frontend_src_directory = "src/ui"
+
+java {
+	sourceCompatibility = "17"
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencyManagement {
+	imports {
+		mavenBom "com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:7.3.6"
+	}
+}
+
+dependencies {
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+	implementation "org.springframework.boot:spring-boot-starter-web"
+
+	implementation(platform("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:7.3.6"))
+	implementation "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter"
+	implementation "com.netflix.graphql.dgs:graphql-dgs-extended-scalars"
+	implementation "com.graphql-java:graphql-java-extended-scalars"
+	implementation "com.netflix.graphql.dgs:graphql-dgs-subscriptions-websockets-autoconfigure"
+	implementation "org.springframework.boot:spring-boot-starter-web"
+
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2'
+	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2'
+	implementation "org.mapstruct:mapstruct:1.5.5.Final"
+	// implementation "org.json:json:20230618"
+	implementation "com.intuit.graphql:graphql-filter-java:1.0.0"
+	implementation 'org.apache.commons:commons-lang3:3.13.0'
+
+	developmentOnly "org.springframework.boot:spring-boot-devtools"
+	compileOnly "org.projectlombok:lombok"
+	runtimeOnly "com.h2database:h2"
+	annotationProcessor "org.projectlombok:lombok"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	annotationProcessor "org.mapstruct:mapstruct-processor:1.5.5.Final"
+}
+
+tasks.named("test") {
+	useJUnitPlatform()
+}
+
+// processResources {
+// 	from("${frontend_src_directory}/dist") {
+// 		into("${sourceSets.main.output.resourcesDir}/static")
+// 	}
+// }
+
+// task npmInstall(type: Exec) {
+//   workingDir "${frontend_src_directory}"
+// 	commandLine "npm", "install"
+// }
+
+// task npmBuild(type: Exec) {
+// 	dependsOn npmInstall
+//   workingDir "${frontend_src_directory}"
+// 	commandLine "npm", "run build"
+// }
+
+// bootJar {
+//     dependsOn npmBuild
+// }
+
+// generateJava{
+//    schemaPaths = ["${projectDir}/src/main/resources/schema"] // List of directories containing schema files
+//    packageName = "com.example.wisdompet" // The package name to use to generate sources
+//    generateClientv2 = true // Enable generating the type safe query API
+// }
